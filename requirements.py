@@ -1,15 +1,15 @@
 from collections import namedtuple, defaultdict
 from math import ceil
-Rule = namedtuple('Rule', 'name, required, source, ship, consume, produce')
-Stack = namedtuple('Stack', 'item, count')
-nicenames = {
+
+nice_names = {
     '16':'WildHorseradish','18':'Daffodil','20':'Leek','22':'Dandelion','24':'Parsnip','30':'Lumber','60':'Emerald','62':'Aquamarine','64':'Ruby','66':'Amethyst','68':'Topaz','70':'Jade','72':'Diamond','74':'PrismaticShard','78':'CaveCarrot','80':'Quartz','82':'FireQuartz','84':'FrozenTear','86':'EarthCrystal','88':'Coconut','90':'CactusFruit','92':'Sap','93':'Torch','94':'SpiritTorch','96':'DwarfScrollI','97':'DwarfScrollII','98':'DwarfScrollIII','99':'DwarfScrollIV','100':'ChippedAmphora','101':'Arrowhead','102':'LostBook','103':'AncientDoll','104':'ElvishJewelry','105':'ChewingStick','106':'OrnamentalFan','107':'DinosaurEgg','108':'RareDisc','109':'AncientSword','110':'RustySpoon','111':'RustySpur','112':'RustyCog','113':'ChickenStatue','114':'AncientSeed','115':'PrehistoricTool','116':'DriedStarfish','117':'Anchor','118':'GlassShards','119':'BoneFlute','120':'PrehistoricHandaxe','121':'DwarvishHelm','122':'DwarfGadget','123':'AncientDrum','124':'GoldenMask','125':'GoldenRelic','126':'StrangeDoll','127':'StrangeDoll','128':'Pufferfish','129':'Anchovy','130':'Tuna','131':'Sardine','132':'Bream','136':'LargemouthBass','137':'SmallmouthBass','138':'RainbowTrout','139':'Salmon','140':'Walleye','141':'Perch','142':'Carp','143':'Catfish','144':'Pike','145':'Sunfish','146':'RedMullet','147':'Herring','148':'Eel','149':'Octopus','150':'RedSnapper','151':'Squid','152':'Seaweed','153':'GreenAlgae','154':'SeaCucumber','155':'SuperCucumber','156':'Ghostfish','157':'WhiteAlgae','158':'Stonefish','159':'Crimsonfish','160':'Angler','161':'IcePip','162':'LavaEel','163':'Legend','164':'Sandfish','165':'ScorpionCarp','166':'TreasureChest','167':'JojaCola','168':'Trash','169':'Driftwood','170':'BrokenGlasses','171':'BrokenCD','172':'SoggyNewspaper','174':'LargeWhiteEgg','176':'WhiteEgg','178':'Hay','180':'BrownEgg','182':'LargeBrownEgg','184':'Milk','186':'LargeMilk','188':'GreenBean','190':'Cauliflower','192':'Potato','194':'FriedEgg','195':'Omelet','196':'Salad','197':'CheeseCauliflower','198':'BakedFish','199':'ParsnipSoup','200':'VegetableMedley','201':'CompleteBreakfast','202':'FriedCalamari','203':'StrangeBun','204':'LuckyLunch','205':'FriedMushroom','206':'Pizza','207':'BeanHotpot','208':'GlazedYams','209':'CarpSurprise','210':'Hashbrowns','211':'Pancakes','212':'SalmonDinner','213':'FishTaco','214':'CrispyBass','215':'PepperPoppers','216':'Bread','218':'TomKhaSoup','219':'TroutSoup','220':'ChocolateCake','221':'PinkCake','222':'RhubarbPie','223':'Cookie','224':'Spaghetti','225':'FriedEel','226':'SpicyEel','227':'Sashimi','228':'MakiRoll','229':'Tortilla','230':'RedPlate','231':'EggplantParmesan','232':'RicePudding','233':'IceCream','234':'BlueberryTart','235':'Autumn\'sBounty','236':'PumpkinSoup','237':'SuperMeal','238':'CranberrySauce','239':'Stuffing','240':'Farmer\'sLunch','241':'SurvivalBurger','242':'DishO\'TheSea','243':'Miner\'sTreat','244':'RootsPlatter','245':'Sugar','246':'WheatFlour','247':'Oil','248':'Garlic','250':'Kale','252':'Rhubarb','254':'Melon','256':'Tomato','257':'Morel','258':'Blueberry','259':'FiddleheadFern','260':'HotPepper','262':'Wheat','264':'Radish','266':'RedCabbage','268':'Starfruit','270':'Corn','272':'Eggplant','274':'Artichoke','276':'Pumpkin','278':'BokChoy','280':'Yam','281':'Chanterelle','282':'Cranberries','283':'Holly','284':'Beet','286':'CherryBomb','287':'Bomb','288':'MegaBomb','296':'Salmonberry','297':'GrassStarter','298':'HardwoodFence','299':'AmaranthSeeds','300':'Amaranth','301':'GrapeStarter','302':'HopsStarter','303':'PaleAle','304':'Hops','305':'VoidEgg','306':'Mayonnaise','307':'DuckMayonnaise','308':'VoidMayonnaise','309':'Acorn','310':'MapleSeed','311':'PineCone','322':'WoodFence','323':'StoneFence','324':'IronFence','325':'Gate','326':'DwarvishTranslationGuide','328':'WoodFloor','329':'StoneFloor','330':'Clay','331':'WeatheredFloor','333':'CrystalFloor','334':'CopperBar','335':'IronBar','336':'GoldBar','337':'IridiumBar','338':'RefinedQuartz','340':'Honey','341':'TeaSet','342':'Pickles','344':'Jelly','346':'Beer','347':'RareSeed','348':'Wine','349':'EnergyTonic','350':'Juice','351':'MuscleRemedy','368':'BasicFertilizer','369':'QualityFertilizer','370':'BasicRetainingSoil','371':'QualityRetainingSoil','372':'Clam','373':'GoldenPumpkin','376':'Poppy','378':'CopperOre','380':'IronOre','382':'Coal','384':'GoldOre','386':'IridiumOre','388':'Wood','390':'Stone','392':'NautilusShell','393':'Coral','394':'RainbowShell','395':'Coffee','396':'SpiceBerry','397':'SeaUrchin','398':'Grape','399':'SpringOnion','400':'Strawberry','401':'StrawFloor','402':'SweetPea','403':'FieldSnack','404':'CommonMushroom','405':'WoodPath','406':'WildPlum','407':'GravelPath','408':'Hazelnut','409':'CrystalPath','410':'Blackberry','411':'CobblestonePath','412':'WinterRoot','413':'BlueSlimeEgg','414':'CrystalFruit','415':'SteppingStonePath','416':'SnowYam','417':'SweetGemBerry','418':'Crocus','419':'Vinegar','420':'RedMushroom','421':'Sunflower','422':'PurpleMushroom','423':'Rice','424':'Cheese','425':'FairySeeds','426':'GoatCheese','427':'TulipBulb','428':'Cloth','429':'JazzSeeds','430':'Truffle','431':'SunflowerSeeds','432':'TruffleOil','433':'CoffeeBean','434':'Stardrop','436':'GoatMilk','437':'RedSlimeEgg','438':'L.GoatMilk','439':'PurpleSlimeEgg','440':'Wool','441':'ExplosiveAmmo','442':'DuckEgg','444':'DuckFeather','446':'Rabbit\'sFoot','449':'StoneBase','453':'PoppySeeds','454':'AncientFruit','455':'SpangleSeeds','456':'AlgaeSoup','457':'PaleBroth','458':'Bouquet','459':'Mead','460':'Mermaid\'sPendant','461':'DecorativePot','463':'DrumBlock','464':'FluteBlock','465':'Speed-Gro','466':'DeluxeSpeed-Gro','472':'ParsnipSeeds','473':'BeanStarter','474':'CauliflowerSeeds','475':'PotatoSeeds','476':'GarlicSeeds','477':'KaleSeeds','478':'RhubarbSeeds','479':'MelonSeeds','480':'TomatoSeeds','481':'BlueberrySeeds','482':'PepperSeeds','483':'WheatSeeds','484':'RadishSeeds','485':'RedCabbageSeeds','486':'StarfruitSeeds','487':'CornSeeds','488':'EggplantSeeds','489':'ArtichokeSeeds','490':'PumpkinSeeds','491':'BokChoySeeds','492':'YamSeeds','493':'CranberrySeeds','494':'BeetSeeds','495':'SpringSeeds','496':'SummerSeeds','497':'FallSeeds','498':'WinterSeeds','499':'AncientSeeds','516':'SmallGlowRing','517':'GlowRing','518':'SmallMagnetRing','519':'MagnetRing','520':'SlimeCharmerRing','521':'WarriorRing','522':'VampireRing','523':'SavageRing','524':'RingofYoba','525':'SturdyRing','526':'Burglar\'sRing','527':'IridiumBand','528':'JukeboxRing','529':'AmethystRing','530':'TopazRing','531':'AquamarineRing','532':'JadeRing','533':'EmeraldRing','534':'RubyRing','535':'Geode','536':'FrozenGeode','537':'MagmaGeode','538':'Alamite','539':'Bixite','540':'Baryte','541':'Aerinite','542':'Calcite','543':'Dolomite','544':'Esperite','545':'Fluorapatite','546':'Geminite','547':'Helvite','548':'Jamborite','549':'Jagoite','550':'Kyanite','551':'Lunarite','552':'Malachite','553':'Neptunite','554':'LemonStone','555':'Nekoite','556':'Orpiment','557':'PetrifiedSlime','558':'ThunderEgg','559':'Pyrite','560':'OceanStone','561':'GhostCrystal','562':'Tigerseye','563':'Jasper','564':'Opal','565':'FireOpal','566':'Celestine','567':'Marble','568':'Sandstone','569':'Granite','570':'Basalt','571':'Limestone','572':'Soapstone','573':'Hematite','574':'Mudstone','575':'Obsidian','576':'Slate','577':'FairyStone','578':'StarShards','579':'PrehistoricScapula','580':'PrehistoricTibia','581':'PrehistoricSkull','582':'SkeletalHand','583':'PrehistoricRib','584':'PrehistoricVertebra','585':'SkeletalTail','586':'NautilusFossil','587':'AmphibianFossil','588':'PalmFossil','589':'Trilobite','590':'ArtifactSpot','591':'Tulip','593':'SummerSpangle','595':'FairyRose','597':'BlueJazz','599':'Sprinkler','604':'PlumPudding','605':'ArtichokeDip','606':'StirFry','607':'RoastedHazelnuts','608':'PumpkinPie','609':'RadishSalad','610':'FruitSalad','611':'BlackberryCobbler','612':'CranberryCandy','613':'Apple','618':'Bruschetta','621':'QualitySprinkler','628':'CherrySapling','629':'ApricotSapling','630':'OrangeSapling','631':'PeachSapling','632':'PomegranateSapling','633':'AppleSapling','634':'Apricot','635':'Orange','636':'Peach','637':'Pomegranate','638':'Cherry','645':'IridiumSprinkler','648':'Coleslaw','649':'FiddleheadRisotto','651':'PoppyseedMuffin','680':'GreenSlimeEgg','681':'RainTotem','682':'MutantCarp','684':'BugMeat','685':'Bait','686':'Spinner','687':'DressedSpinner','688':'WarpTotem:Farm','689':'WarpTotem:Mountains','690':'WarpTotem:Beach','691':'BarbedHook','692':'LeadBobber','693':'TreasureHunter','694':'TrapBobber','695':'CorkBobber','698':'Sturgeon','699':'TigerTrout','700':'Bullhead','701':'Tilapia','702':'Chub','703':'Magnet','704':'Dorado','705':'Albacore','706':'Shad','707':'Lingcod','708':'Halibut','709':'Hardwood','710':'CrabPot','715':'Lobster','716':'Crayfish','717':'Crab','718':'Cockle','719':'Mussel','720':'Shrimp','721':'Snail','722':'Periwinkle','723':'Oyster','724':'MapleSyrup','725':'OakResin','726':'PineTar','727':'Chowder','728':'FishStew','729':'Escargot','730':'LobsterBisque','731':'MapleBar','732':'CrabCakes','734':'Woodskip','745':'StrawberrySeeds','746':'Jack-O-Lantern','747':'RottenPlant','748':'RottenPlant','749':'OmniGeode','766':'Slime','767':'BatWing','768':'SolarEssence','769':'VoidEssence','770':'MixedSeeds','771':'Fiber','772':'OilofGarlic','773':'LifeElixir','774':'WildBait','775':'Glacierfish','787':'BatteryPack','788':'LostAxe','789':'LuckyPurpleShorts','790':'BerryBasket','795':'VoidSalmon','796':'Slimejack',       
     'big8':'Scarecrow','big9':'LightningRod','big10':'BeeHouse','big12':'Keg','big13':'Furnace','big15':'PreservesJar','big17':'Loom','big16':'CheesePress','big19':'OilMaker','big20':'RecyclingMachine','big21':'Crystalarium','big24':'MayonnaiseMachine','big25':'SeedMaker','big71':'Staircase','big83':'WickedStatue','big105':'Tapper','big108':'Tubo\'Flowers','big114':'CharcoalKiln','big130':'Chest','big143':'WoodenBrazier','big144':'StoneBrazier','big145':'GoldBrazier','big146':'Campfire','big147':'StumpBrazier','big148':'CarvedBrazier','big149':'SkullBrazier','big150':'BarrelBrazier','big151':'MarbleBrazier','big152':'WoodLamp-post','big153':'IronLamp-post','big154':'WormBin','big156':'SlimeIncubator','big158':'SlimeEgg-Press','big163':'Cask',                                    
 }
+# item state to keep track of what has been produced, and what still needs to be produced
 class ItemState:
     def __init__(self, id):
-        if id in nicenames:
-            self.name = nicenames[id]
+        if id in nice_names:
+            self.name = nice_names[id]
             if id.startswith('big'):
                 self.big = True
                 self.id = int(id[3:])
@@ -21,10 +21,10 @@ class ItemState:
             self.big = False
             self.id = id
         self._sources = []
-        self.input = 0
-        self.shipped = 0
-        self.consumed = 0 
-        self.extra = 0 # may be negative to indicate that more needs to be acquired
+        self.inputted = 0 # count that has to be acquired in a way that is not tracked
+        self.shipped = 0  # count that has been put in the shipping bin
+        self.consumed = 0 # count that has been consumed (eg crafting or bundles)
+        self.extra = 0    # count that is leftover, may be negative to indicate that more needs to be acquired
     @property
     def source(self):
         if len(self._sources) == 0:
@@ -34,6 +34,7 @@ class ItemState:
         raise ValueError('Item '+self.name+' has multiple sources: '+str(self._sources))
     @source.setter
     def source(self, source):
+        # CLEANUP do not throw immediately, so items that side effect items (like farmxp) do not throw
         self._sources.append(source)
     def ship(self, count):
         self.extra -= max(0, count - self.shipped)
@@ -41,8 +42,8 @@ class ItemState:
     def consume(self, count):
         self.extra -= count
         self.consumed += count
-    def external(self, count):
-        self.input += count
+    def input(self, count):
+        self.inputted += count
         self.extra += count
     def produce(self, count):
         self.extra += count
@@ -53,14 +54,26 @@ class ItemState:
     def isother(self):
         return self.name is None
     def __str__(self):
-        return "(input={}, ship={}, consume={}, extra={})".format(self.input, self.shipped, self.consumed, self.extra)
+        return "(inputted={}, shipped={}, consumed={}, extra={})".format(self.inputted, self.shipped, self.consumed, self.extra)
     def __repr__(self):
-        return "(input={}, ship={}, consume={}, extra={})".format(self.input, self.shipped, self.consumed, self.extra)
+        return "(inputted={}, shipped={}, consumed={}, extra={})".format(self.inputted, self.shipped, self.consumed, self.extra)
+# helper to cleanly and lazily get mutable ItemStates
 class ItemStateDict(dict):
     def __missing__(self, id):
         item = ItemState(id)
         self[id] = item
         return item
+
+Rule = namedtuple('Rule', 'name, required, source, ship, consume, produce')
+# paring code to make building rules easier
+def rules(str):
+    list = []
+    for str in str.split('\n'):
+        str = str.split('#',1)[0].strip()
+        if len(str) == 0:
+            continue
+        list.append(rule(str))
+    return list
 def rule(str):
     split = str.split(':',1)
     name = split[0].strip()
@@ -84,25 +97,19 @@ def rule(str):
             args[argname] = stacks(argsplit[1:])
     return Rule(**args)
 def stacks(split):
-    stacks = map(stack, split)
-    return {s.item: s.count for s in stacks}
+    return dict(map(stack, split))
 def stack(str):
     split = str.split('*')
-    item = split[0]
+    id = split[0]
     count = int(split[1]) if len(split)>1 else 1
-    return Stack(item, count)
-def rules(str):
-    list = []
-    for str in str.split('\n'):
-        str = str.split('#',1)[0].strip()
-        if len(str) == 0:
-            continue
-        list.append(rule(str))
-    return list
+    return (id, count)
+
+
 def count(rules):
     items = ItemStateDict()
-    taken = defaultdict(int)        # number of times each rule is taken
+    taken = defaultdict(int)
     
+    # update items by taking rule c times
     def take(rule, c):
         taken[rule.name] += c
         for id, count in rule.ship.items():
@@ -112,7 +119,8 @@ def count(rules):
         for id, count in rule.produce.items():
             items[id].produce(count*c)
         
-    
+    # initialize items by taking all required rules
+    # and setting the item sources
     for r in rules:
         if r.source:
             for id in r.produce.keys():
@@ -120,16 +128,21 @@ def count(rules):
         if r.required:
             take(r,1)
     
-    didSomething = True
-    while didSomething:
-        didSomething = False
+    # while there may be more things to do
+    did_something = True
+    while did_something:
+        did_something = False
+        # for each item that needs more to be produced
         for id, item in list(items.items()): # copy to be able to safely add items
             if item.extra < 0:
-                didSomething = True
+                did_something = True
+                # produce that item
                 rule = item.source
                 if rule is None:
-                    item.external(-item.extra)
+                    # item does not have a known source, just input new items
+                    item.input(-item.extra)
                 else:
+                    # item has a source, take the rule enough times to get its count >= 0
                     count = int(ceil(-item.extra/rule.produce[id]))
                     take(rule, count)
                 
@@ -150,14 +163,14 @@ def printitems(items):
     header = '  id |         name         | input | ship | consume | extra | '
     sep =    '-----+----------------------+-------+------+---------+-------+-'
     row = ' {:>3} | {:<20} | {:>5} | {:>4} | {:>7} | {:>5} | '
-    rows = [row.format(item.id, item.name, item.input, item.shipped, item.consumed, item.extra) for item in items]
+    rows = [row.format(item.id, item.name, item.inputted, item.shipped, item.consumed, item.extra) for item in items]
     print(header, sep, *rows, sep='\n')
 def printother(items):
     items.sort(key=lambda item:item.id)
     header = '    name    |  input | ship | consume | extra | '
     sep =    '------------+--------+------+---------+-------+-'
     row = ' {:<10} | {:>6} | {:>4} | {:>7} | {:>5} | '
-    rows = [row.format(item.id, item.input, item.shipped, item.consumed, item.extra) for item in items]
+    rows = [row.format(item.id, item.inputted, item.shipped, item.consumed, item.extra) for item in items]
     print(header, sep, *rows, sep='\n')
 def printmap(header, map):
     print(header)
