@@ -34,7 +34,7 @@ class ItemState:
         raise ValueError('Item '+self.name+' has multiple sources: '+str(self._sources))
     @source.setter
     def source(self, source):
-        # CLEANUP do not throw immediately, so items that side effect items (like farmxp) do not throw
+        # CLEANUP do not throw immediately, so that side effect items (like farm_xp) do not throw
         self._sources.append(source)
     def ship(self, count):
         self.extra -= max(0, count - self.shipped)
@@ -47,12 +47,14 @@ class ItemState:
         self.extra += count
     def produce(self, count):
         self.extra += count
-    def isobject(self):
+    def is_object(self):
         return self.name is not None and not self.big
-    def isbig(self):
+    def is_big(self):
         return self.big
-    def isother(self):
+    def is_other(self):
         return self.name is None
+    def has_consume(self):
+        return self.shipped>0 or self.consumed>0
     def __str__(self):
         return "(inputted={}, shipped={}, consumed={}, extra={})".format(self.inputted, self.shipped, self.consumed, self.extra)
     def __repr__(self):
@@ -149,15 +151,15 @@ def count(rules):
                 
 
     print('Objects:')
-    printitems([item for item in items.values() if item.isobject()])
+    printitems([item for item in items.values() if item.is_object() and item.has_consume()])
     print()
     print('Big Craftables:')
-    printitems([item for item in items.values() if item.isbig()])
+    printitems([item for item in items.values() if item.is_big() and item.has_consume()])
     print()
     print('Other:')
-    printother([item for item in items.values() if item.isother()])
+    print_other([item for item in items.values() if item.is_other()])
     print()
-    printmap('rules taken:', taken)
+    print_map('rules taken:', taken)
 def printitems(items):
     items.sort(key=lambda item:item.id)
     header = '  id |         name         | input | ship | consume | extra | '
@@ -165,14 +167,14 @@ def printitems(items):
     row = ' {:>3} | {:<20} | {:>5} | {:>4} | {:>7} | {:>5} | '
     rows = [row.format(item.id, item.name, item.inputted, item.shipped, item.consumed, item.extra) for item in items]
     print(header, sep, *rows, sep='\n')
-def printother(items):
+def print_other(items):
     items.sort(key=lambda item:item.id)
-    header = '    name    |  input | ship | consume | extra | '
-    sep =    '------------+--------+------+---------+-------+-'
-    row = ' {:<10} | {:>6} | {:>4} | {:>7} | {:>5} | '
+    header = '    name    |  input  | ship | consume | extra | '
+    sep =    '------------+---------+------+---------+-------+-'
+    row = ' {:<10} | {:>7} | {:>4} | {:>7} | {:>5} | '
     rows = [row.format(item.id, item.inputted, item.shipped, item.consumed, item.extra) for item in items]
     print(header, sep, *rows, sep='\n')
-def printmap(header, map):
+def print_map(header, map):
     print(header)
     items = list(map.items())
     items.sort()
@@ -181,10 +183,15 @@ def printmap(header, map):
             print('    {}: {}'.format(item, count))
 
 count(rules('''
+# routing
+# need a lot of bombs and stairs to get mining xp from skull cave
+mining_tools: required, consume 288*200 big71*50 773*50
+speed: required, consume 395*100
+
+
 # achievements
 ship_all: required, ship 16 18 20 22 24 78 88 90 92 174 176 180 182 184 186 188 190 192 248 250 252 254 256 257 258 259 260 262 264 266 268 270 272 274 276 278 280 281 282 283 284 296 300 303 304 305 306 307 308 330 334 335 336 337 338 340 342 344 346 348 350 372 376 378 380 382 384 386 388 390 392 393 394 396 397 398 399 400 402 404 406 408 410 412 414 416 417 418 420 421 422 424 426 428 430 432 433 436 438 440 442 444 446 454 459 591 593 595 597 613 634 635 636 637 638 684 709 724 725 726 766 767 768 769 771 787
 ship_many: required, ship 24*15 188*15 190*15 192*15 248*15 250*15 252*15 254*15 256*15 258*15 260*15 262*15 264*15 266*15 268*15 270*15 272*15 274*15 276*15 278*15 280*15 282*15 284*15 300*15 304*15 398*15 400*15 433*15 
-
 # not producing 499, as we still have to craft one anyway
 museum: required, consume 60 62 64 66 68 70 72 74 80 82 84 86 96 97 98 99 100 101 103 104 105 106 107 108 109 110 111 112 113 114 115 116 117 118 119 120 121 122 123 124 125 126 127 538 539 540 541 542 543 544 545 546 547 548 549 550 551 552 553 554 555 556 557 558 559 560 561 562 563 564 565 566 567 568 569 570 571 572 573 574 575 576 577 578 579 580 581 582 583 584 585 586 587 588 589
 
@@ -213,12 +220,37 @@ build_house2: required, consume gold*10000 388*450
 build_house3: required, consume gold*50000 709*150
 build_house4: required, consume gold*100000
 
+# tools
+buy_pail: required, consume gold*1000
+# buy_shears: required, consume gold*1000
+buy_axe2: required, consume 334*5 gold*2000
+# buy_axe3: required, consume 335*5 gold*5000
+# buy_axe4: required, consume 336*5 gold*10000
+# buy_axe5: required, consume 337*5 gold*25000
+# buy_pick2: required, consume 334*5 gold*2000
+# buy_pick3: required, consume 335*5 gold*5000
+# buy_pick4: required, consume 336*5 gold*10000
+# buy_pick5: required, consume 337*5 gold*25000
+# buy_hoe2: required, consume 334*5 gold*2000
+# buy_hoe3: required, consume 335*5 gold*5000
+# buy_hoe4: required, consume 336*5 gold*10000
+# buy_hoe5: required, consume 337*5 gold*25000
+# buy_can2: required, consume 334*5 gold*2000
+# buy_can3: required, consume 335*5 gold*5000
+# buy_can4: required, consume 336*5 gold*10000
+# buy_can5: required, consume 337*5 gold*25000
+# buy_pole1: required, consume gold*500 # should never need to buy bamboo pole
+buy_pole2: required, consume gold*1800
+# buy_pole3: required, consume gold*7500
+buy_galaxy_hammer: required, consume gold*75000
+aquire_galaxy_sword: required, consume 74
+buy_return_scepter: required, consume gold*4000000
+
 # recipes
 robin_recepies: required, consume gold*17250
 dwarf_recepies: required, consume gold*500
 krobus_recepies: required, consume gold*500
 festival_recepies: required, consume gold*4000
-
 
 # cooking
 cook_194: required, produce 194, consume any_egg*1
@@ -294,90 +326,86 @@ cook_731: required, produce 731, consume 724*1 245*1 246*1
 cook_732: required, produce 732, consume 717*1 246*1 any_egg*1 247*1
 
 # crafting
+craft_93: required, produce 93, consume 388*1 92*2
+craft_286: required, produce 286, consume 378*4 382*1
+craft_287: required, produce 287, consume 380*4 382*1
+craft_288: required, no_source, produce 288, consume 384*4 768*1 769*1
+craft_298: required, produce 298, consume 709*1
 craft_322: required, produce 322, consume 388*2
 craft_323: required, produce 323, consume 390*2
 craft_324: required, produce 324*10, consume 335*1
-craft_298: required, produce 298, consume 709*1
 craft_325: required, produce 325, consume 388*10
-craft_big130: required, produce big130, consume 388*50
-craft_93: required, produce 93, consume 388*1 92*2
-craft_big8: required, produce big8, consume 388*50 382*1 771*20
-craft_big10: required, produce big10, consume 388*40 382*8 335*1 724*1
-craft_big12: required, produce big12, consume 388*30 334*1 335*1 725*1
-craft_big163: required, produce big163, consume 388*20 709*1
-craft_big13: required, produce big13, consume 378*20 390*25
-craft_big16: required, produce big16, consume 388*45 390*45 709*10 334*1
-craft_big24: required, produce big24, consume 388*15 390*15 86*1 334*1
-craft_big25: required, produce big25, consume 388*25 382*10 336*1
-craft_big17: required, produce big17, consume 388*60 771*30 726*1
-craft_big19: required, produce big19, consume 766*50 709*20 336*1
-craft_big20: required, produce big20, consume 388*25 390*25 335*1
-craft_big154: required, produce big154, consume 709*25 336*1 335*1 771*50
-craft_big15: required, produce big15, consume 388*50 390*40 382*8
-craft_big114: required, produce big114, consume 388*20 336*1
-craft_big105: required, produce big105, consume 388*40 334*2
-craft_big9: required, produce big9, consume 335*1 338*1 767*5
-craft_big156: required, produce big156, consume 337*2 766*100
-craft_big158: required, produce big158, consume 382*25 82*1 787*1
-craft_big21: required, produce big21, consume 390*99 336*5 337*2 787*1
-craft_599: required, produce 599, consume 334*1 335*1
-craft_621: required, produce 621, consume 335*1 336*1 338*1
-craft_645: required, produce 645, consume 336*1 337*1 787*1
-craft_big71: required, produce big71, consume 390*99
-craft_464: required, produce 464, consume 388*10 378*2 771*20
-craft_463: required, produce 463, consume 390*10 378*2 771*20
+craft_328: required, produce 328, consume 388*1
+craft_329: required, produce 329, consume 390*1
+craft_331: required, produce 331, consume 388*1
+craft_333: required, produce 333*5, consume 338*1
+craft_335: required, no_source, produce 335, consume 334*3
+craft_336: required, no_source, produce 336, consume 335*2
 craft_368: required, produce 368, consume 92*2
 craft_369: required, produce 369, consume 92*2 any_fish*1
 craft_370: required, produce 370, consume 390*2
 craft_371: required, produce 371*2, consume 390*3 330*1
+craft_401: required, produce 401, consume 388*1 771*1
+craft_403: required, produce 403, consume 309*1 310*1 311*1
+craft_405: required, produce 405, consume 388*1
+craft_407: required, produce 407, consume 390*1
+craft_409: required, produce 409*5, consume 338*1
+craft_411: required, produce 411, consume 390*1
+craft_415: required, produce 415, consume 390*1
+craft_441: required, produce 441*5, consume 335*1 382*2
+craft_463: required, produce 463, consume 390*10 378*2 771*20
+craft_464: required, produce 464, consume 388*10 378*2 771*20
 craft_465: required, produce 465*5, consume 726*1 372*1
 craft_466: required, produce 466*5, consume 725*1 393*1
-craft_286: required, produce 286, consume 378*4 382*1
-craft_287: required, produce 287, consume 380*4 382*1
-craft_288: required, produce 288, consume 384*4 768*1 769*1
-craft_441: required, produce 441*5, consume 335*1 382*2
-craft_335: required, no_source, produce 335, consume 334*3
-craft_336: required, no_source, produce 336, consume 335*2
-craft_499: required, produce 499, consume 114*1
 craft_495: required, produce 495*10, consume 16*1 18*1 20*1 22*1
 craft_496: required, produce 496*10, consume 396*1 398*1 402*1
 craft_497: required, produce 497*10, consume 404*1 406*1 408*1 410*1
 craft_498: required, produce 498*10, consume 412*1 414*1 416*1 418*1
+craft_499: required, produce 499, consume 114*1
+craft_521: required, produce 521, consume 335*10 382*25 84*10
+craft_524: required, produce 524, consume 336*5 335*5 72*1
+craft_525: required, produce 525, consume 334*10 338*5 86*10
+craft_527: required, produce 527, consume 337*5 768*50 769*50
+craft_599: required, produce 599, consume 334*1 335*1
+craft_621: required, produce 621, consume 335*1 336*1 338*1
+craft_645: required, produce 645, consume 336*1 337*1 787*1
+craft_681: required, produce 681, consume 709*1 432*1 726*5
+craft_685: required, produce 685*5, consume 684*1
+craft_686: required, produce 686, consume 335*2
+craft_687: required, produce 687, consume 335*2 428*1
 craft_688: required, produce 688, consume 709*1 340*1 771*20
 craft_689: required, produce 689, consume 709*1 335*1 390*25
 craft_690: required, produce 690, consume 709*1 393*2 771*10
-craft_681: required, produce 681, consume 709*1 432*1 726*5
-craft_403: required, produce 403, consume 309*1 310*1 311*1
-craft_746: required, produce 746, consume 276*1 93*1
-craft_328: required, produce 328, consume 388*1
-craft_401: required, produce 401, consume 388*1 771*1
-craft_331: required, produce 331, consume 388*1
-craft_333: required, produce 333*5, consume 338*1
-craft_329: required, produce 329, consume 390*1
-craft_405: required, produce 405, consume 388*1
-craft_407: required, produce 407, consume 390*1
-craft_411: required, produce 411, consume 390*1
-craft_415: required, produce 415, consume 390*1
-craft_409: required, produce 409*5, consume 338*1
-craft_774: required, produce 774*5, consume 771*10 684*5 766*5
-craft_685: required, produce 685*5, consume 684*1
-craft_686: required, produce 686, consume 335*2
-craft_703: required, produce 703*3, consume 335*1
+craft_691: required, produce 691, consume 334*1 335*1 336*1
+craft_693: required, produce 693, consume 336*2
 craft_694: required, produce 694, consume 334*1 92*10
 craft_695: required, produce 695, consume 388*10 709*5 766*10
-craft_687: required, produce 687, consume 335*2 428*1
-craft_693: required, produce 693, consume 336*2
-craft_691: required, produce 691, consume 334*1 335*1 336*1
-craft_772: required, produce 772*1, consume 248*10 247*1
-craft_773: required, produce 773*1, consume 420*1 422*1 257*1 281*1
+craft_703: required, produce 703*3, consume 335*1
 craft_710: required, produce 710, consume 388*40 335*3
-craft_527: required, produce 527, consume 337*5 768*50 769*50
-craft_524: required, produce 524, consume 336*5 335*5 72*1
-craft_525: required, produce 525, consume 334*10 338*5 86*10
-craft_521: required, produce 521, consume 335*10 382*25 84*10
-craft_big108: required, produce big108, consume 388*15 427*1 429*1 453*1 455*1
-craft_big143: required, produce big143, consume 388*10 382*1 771*5
+craft_746: required, produce 746, consume 276*1 93*1
+craft_772: required, produce 772*1, consume 248*10 247*1
+craft_773: required, no_source, produce 773*1, consume 420*1 422*1 257*1 281*1
+craft_774: required, produce 774*5, consume 771*10 684*5 766*5
+craft_big8: required, produce big8, consume 388*50 382*1 771*20
+craft_big9: required, produce big9, consume 335*1 338*1 767*5
+craft_big10: required, produce big10, consume 388*40 382*8 335*1 724*1
+craft_big12: required, produce big12, consume 388*30 334*1 335*1 725*1
+craft_big13: required, produce big13, consume 378*20 390*25
+craft_big15: required, produce big15, consume 388*50 390*40 382*8
+craft_big16: required, produce big16, consume 388*45 390*45 709*10 334*1
+craft_big17: required, produce big17, consume 388*60 771*30 726*1
+craft_big19: required, produce big19, consume 766*50 709*20 336*1
+craft_big20: required, produce big20, consume 388*25 390*25 335*1
+craft_big21: required, produce big21, consume 390*99 336*5 337*2 787*1
+craft_big24: required, produce big24, consume 388*15 390*15 86*1 334*1
+craft_big25: required, produce big25, consume 388*25 382*10 336*1
+craft_big71: required, produce big71, consume 390*99
 craft_big83: required, produce big83, consume 382*5 390*25
+craft_big105: required, produce big105, consume 388*40 334*2
+craft_big108: required, produce big108, consume 388*15 427*1 429*1 453*1 455*1
+craft_big114: required, produce big114, consume 388*20 336*1
+craft_big130: required, produce big130, consume 388*50
+craft_big143: required, produce big143, consume 388*10 382*1 771*5
 craft_big144: required, produce big144, consume 390*10 382*1 771*5
 craft_big145: required, produce big145, consume 336*1 382*1 771*5
 craft_big146: required, produce big146, consume 390*10 388*10 771*10
@@ -388,44 +416,54 @@ craft_big150: required, produce big150, consume 388*50 768*1 382*1
 craft_big151: required, produce big151, consume 567*1 62*1 390*100
 craft_big152: required, produce big152, consume 388*50 787*1
 craft_big153: required, produce big153, consume 335*1 787*1
+craft_big154: required, produce big154, consume 709*25 336*1 335*1 771*50
+craft_big156: required, produce big156, consume 337*2 766*100
+craft_big158: required, produce big158, consume 382*25 82*1 787*1
+craft_big163: required, produce big163, consume 388*20 709*1
 
 # farming
-farm_24: produce 24 farmxp*8
-farm_188: produce 188 farmxp*9
-farm_190: produce 190 farmxp*23
-farm_192: produce 192 farmxp*14 #actually id*1.2
-farm_248: produce 248 farmxp*12
-farm_250: produce 250 farmxp*0
-farm_252: produce 252 farmxp*26
-farm_254: produce 254 farmxp*27
-farm_256: produce 256 farmxp*12 #actually id*1.05
-farm_258: produce 258*3 farmxp*10 #actually id*3.02
-farm_260: produce 260 farmxp*9
-farm_262: produce 262 farmxp*0
-farm_264: produce 264 farmxp*15
-farm_266: produce 266 farmxp*28
-farm_268: produce 268 farmxp*43
-farm_270: produce 270 farmxp*10
-farm_272: produce 272 farmxp*12
-farm_274: produce 274 farmxp*22
-farm_276: produce 276 farmxp*31
-farm_278: produce 278 farmxp*14
-farm_280: produce 280 farmxp*22
-farm_282: produce 282*2 farmxp*14 #actually id*2.1
-farm_284: produce 284 farmxp*16
-farm_300: produce 300 farmxp*0
-farm_304: produce 304 farmxp*6
-farm_376: produce 376 farmxp*20
-farm_398: produce 398 farmxp*14
-farm_400: produce 400 farmxp*18 #actually id*1.02
-farm_417: produce 417 farmxp*64
-farm_421: produce 421 431*2 farmxp*14
-# farm_433: produce 433*4 farmxp*4 #are seeds so no need to plant
-farm_454: produce 454 farmxp*38
-farm_591: produce 591 farmxp*7
-farm_593: produce 593 farmxp*15
-farm_595: produce 595 farmxp*29
-farm_597: produce 597 farmxp*10
+farm_24: produce 24 farm_xp*8
+farm_188: produce 188 farm_xp*9
+farm_190: produce 190 farm_xp*23
+farm_192: produce 192 farm_xp*14 #actually id*1.2
+farm_248: produce 248 farm_xp*12
+farm_250: produce 250 farm_xp*0
+farm_252: produce 252 farm_xp*26
+farm_254: produce 254 farm_xp*27
+farm_256: produce 256 farm_xp*12 #actually id*1.05
+farm_258: produce 258*3 farm_xp*10 #actually id*3.02
+farm_260: produce 260 farm_xp*9
+farm_262: produce 262 farm_xp*0
+farm_264: produce 264 farm_xp*15
+farm_266: produce 266 farm_xp*28
+farm_268: produce 268 farm_xp*43
+farm_270: produce 270 farm_xp*10
+farm_272: produce 272 farm_xp*12
+farm_274: produce 274 farm_xp*22
+farm_276: produce 276 farm_xp*31
+farm_278: produce 278 farm_xp*14
+farm_280: produce 280 farm_xp*22
+farm_282: produce 282*2 farm_xp*14 #actually id*2.1
+farm_284: produce 284 farm_xp*16
+farm_300: produce 300 farm_xp*0
+farm_304: produce 304 farm_xp*6
+farm_376: produce 376 farm_xp*20
+farm_398: produce 398 farm_xp*14
+farm_400: produce 400 farm_xp*18 #actually id*1.02
+farm_417: produce 417 farm_xp*64
+farm_421: produce 421 431*2 farm_xp*14
+# farm_433: produce 433*4 farm_xp*4 #are seeds so no need to plant
+farm_454: produce 454 farm_xp*38
+farm_591: produce 591 farm_xp*7
+farm_593: produce 593 farm_xp*15
+farm_595: produce 595 farm_xp*29
+farm_597: produce 597 farm_xp*10
+
+# foraging
+# foraging is too random, so only including known xp to farm hardwood
+forage_709: produce 709*2 forage_xp*25
+# chop all the large logs, causes less xp gain and requires the steel axe
+# forage_large_709: required, no_source, produce 709*8
 
 # tools, comment out any that are not useful
 mayo_306: consume any_egg, produce 306
@@ -441,7 +479,7 @@ keg_303: consume 304, produce 303
 keg_348: consume any_fruit, produce 348
 keg_350: consume any_vege, produce 350
 keg_459: consume 340, produce 459
-keg_395: consume 433*5, produce 395
+# keg_395: consume 433*5, produce 395
 # oil_247: consume 431, produce 247 # sunflower seeds chosen since they are an already available by-product
 # oil_432: consume 430, produce 432
 # kiln_382: consume 388, produce 382
@@ -450,4 +488,24 @@ furnace_335: consume 380*5 382, produce 335
 furnace_336: consume 384*5 382, produce 336
 furnace_337: consume 386*5 382, produce 337
 furnace_338: consume 80 382, produce 338
+
+# purchase resources
+# robin
+buy_388: consume gold*10, produce 388
+buy_390: consume gold*20, produce 390
+# clint
+buy_378: consume gold*75, produce 378
+buy_380: consume gold*150, produce 380
+buy_382: consume gold*150, produce 382
+buy_384: consume gold*400, produce 384
+# krobus
+buy_178: consume gold*50, produce 178
+buy_305: consume gold*5000, produce 305
+buy_768: consume gold*80, produce 768
+buy_769: consume gold*100, produce 769
+# dwarf
+buy_288: consume gold*1000, produce 288
+buy_773: consume gold*1000, produce 773
+# gus
+buy_395: consume gold*300, produce 395
 '''))
